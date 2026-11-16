@@ -1,0 +1,12 @@
+services:
+  quiz-docker:
+    build:
+      context: .
+      target: production
+      args:
+        NODE_ENV: production
+    image: quiz-docker:secure
+    ports:
+      - 8080:8080
+
+
