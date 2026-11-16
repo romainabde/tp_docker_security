@@ -1,0 +1,24 @@
+# ÉTAPE 1 : Build
+FROM node:18-alpine AS build
+
+WORKDIR /app
+
+COPY package.json ./
+COPY package-lock.json ./
+
+RUN npm ci
+
+COPY . .
+
+RUN npm run build
+
+# ÉTAPE 2 : Production
+# Utilisateur non root grâce à nginx-unprivileged
+FROM nginxinc/nginx-unprivileged:alpine AS production
+
+# Récupérer le dossier compilé
+COPY --from=build --chown=nginx:nginx /app/dist /usr/share/nginx/html
+
+EXPOSE 8080
+
+CMD ["nginx", "-g", "daemon off;"]
