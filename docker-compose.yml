@@ -2,11 +2,28 @@ services:
   quiz-docker:
     build:
       context: .
+      dockerfile: Dockerfile.secure
       target: production
       args:
         NODE_ENV: production
+    container_name: quiz-docker-compose-secure
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
+    security_opt :
+      - "no-new-privileges:true"
+    cap_drop:
+      - ALL
     image: quiz-docker:secure
     ports:
-      - 8080:8080
+      - 8082:8082
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+    restart: unless-stopped
 
 
